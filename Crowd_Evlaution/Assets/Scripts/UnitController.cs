@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using TMPro;
+using System.Linq;
+
 public class UnitController : MonoBehaviour
 {
     [SerializeField] private float distanceFactor = 1;
@@ -17,6 +19,7 @@ public class UnitController : MonoBehaviour
     [SerializeField] private float rayFromCameraDistance = 100; 
     [SerializeField] private Transform characterSpwnPoint;
     [SerializeField] private List<Unit> unitLists;
+     public List<Unit> UnitLists { get { return unitLists; } set { unitLists = value; } }
 
     [field:SerializeField] private int year { get; set; } = 100;
     [field:SerializeField] private int characterCount { get; set; } = 1;
@@ -24,6 +27,7 @@ public class UnitController : MonoBehaviour
 
     [SerializeField] protected ObjectCreater objectCreater;
     [SerializeField] private TextMeshProUGUI yearText;
+    [SerializeField] private GameObject textCanvas; 
     private bool swipe = false;
     [SerializeField] private bool onlyIncreaseCharacters = false;
     [SerializeField] private bool isNegativeYearNumber = false;
@@ -31,6 +35,8 @@ public class UnitController : MonoBehaviour
     private Vector3 targetPosition;
     private bool shouldAnimateYearText = false;
     [SerializeField] private bool hasIntialInstantiationHappened = false;
+   
+    private System.Random randomNumber = new System.Random();
     private void Awake()
     {
         unitLists = new List<Unit>();
@@ -39,15 +45,27 @@ public class UnitController : MonoBehaviour
     }
     private void Start()
     {
+        
         SpawnCharacter(year,characterCount,onlyIncreaseCharacters);
         camera = Camera.main;
         hasIntialInstantiationHappened = true;
+        FrontLinePoints.instance.OnFrontLÝneTakeActionEvent += Ýnstance_OnFrontLÝneTakeActionEvent;
     }
+
+    private void Ýnstance_OnFrontLÝneTakeActionEvent(object sender, List<Transform> frontLinePoints)
+    {
+        unitLists = Shuffle(unitLists);
+        moveSpeed = 0;
+        GoToFrontLinePoints(frontLinePoints);
+        textCanvas.SetActive(false);
+
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            SpawnCharacter(year, characterCount,onlyIncreaseCharacters);
+            
         }
         if (Input.GetMouseButtonDown(0))
         {
@@ -146,7 +164,7 @@ public class UnitController : MonoBehaviour
         FormaCharactersOrderly();
       
     }
-    private void FormaCharactersOrderly()
+    public void FormaCharactersOrderly()
     {
         for (int i = 0; i < unitLists.Count; i++)
         {
@@ -184,4 +202,32 @@ public class UnitController : MonoBehaviour
         characterCount += _characterNumbers;
         SpawnCharacter(year, targetCharacterCount, onlyIncreaseCharacters);
     }
+    
+    public  List<T> Shuffle<T>( List<T> list)
+    {
+        var source = list.ToList();
+        int n = source.Count;
+        var shuffled = new List<T>(n);
+        shuffled.AddRange(source);
+        while (n > 1)
+        {
+            n--;
+            int k = randomNumber.Next(n + 1);
+            print(k);
+            T value = shuffled[k];
+            shuffled[k] = shuffled[n];
+            shuffled[n] = value;
+        }
+        return shuffled;
+    }
+    public void GoToFrontLinePoints(List<Transform> frontLinePoints)
+    {
+        for (int i = 0; i < unitLists.Count; i++)
+        {
+            unitLists[i].GoToFrontLinePoint(frontLinePoints[i]);
+       
+
+        }
+    }
+   
 }

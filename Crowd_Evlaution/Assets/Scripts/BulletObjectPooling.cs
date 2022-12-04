@@ -22,18 +22,22 @@ public class BulletObjectPooling : MonoBehaviour
     }
     private void TakeBulletFromPool(Bullet bullet)
     {
+        bullet.SetTrailRendererTime(true);
         bullet.SetDirection(unit.GetBulletBulletDirection());
         bullet.gameObject.SetActive(true);
-       
+        bullet.transform.position = unit.GetBulletSpawnPosition();
+
     }
     private void ReturnBulletFromPool(Bullet bullet)
     {
+        bullet.SetTrailRendererTime(false);
         bullet.gameObject.SetActive(false);
-
         bullet.transform.position = unit.GetBulletSpawnPosition();
+
     }
     private void OnPoolDestroy(Bullet bullet)
     {
+       
         Destroy(bullet.gameObject);
     }
     public void GetBullet()

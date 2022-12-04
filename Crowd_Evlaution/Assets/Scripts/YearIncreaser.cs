@@ -8,7 +8,7 @@ public class YearIncreaser : MonoBehaviour
     [SerializeField] private int year;
     private void Start()
     {
-        yearText.text ="   +\n   " +year.ToString();
+        yearText.text ="   +\n   " +year.ToString()+ "\n   YEARS";
     }
 
 

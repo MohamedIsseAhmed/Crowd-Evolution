@@ -15,6 +15,13 @@ public class Bullet : MonoBehaviour
     private Vector3 originalPosition;
     private Action OnUnitDestroy;
     private Unit unit;
+    private TrailRenderer trailRenderer;
+    private Transform trailHolder;
+    private void Awake()
+    {
+        trailHolder = transform.GetChild(0);
+        trailRenderer = trailHolder.GetComponent<TrailRenderer>();
+    }
     private void Start()
     {
         unit.OnDestroyThisObjectInformBullet += Unit_OnDestroyThisObjectInformBullet;
@@ -22,6 +29,7 @@ public class Bullet : MonoBehaviour
     }
     public void SetPoolObject(IObjectPool<Bullet> objectPool, Unit _unit)
     {
+        //trailRenderer.enabled = true;
         this.unit = _unit;
       
         this.pool = objectPool;
@@ -39,19 +47,25 @@ public class Bullet : MonoBehaviour
         transform.Translate(direction * bulletSpeed * Time.deltaTime, Space.World);
         transform.rotation *= Quaternion.AngleAxis(angel*angelSpeed*Time.deltaTime, -Vector3.forward);
         timer -= Time.deltaTime;
+        if (timer <= 0.5)
+        {
+            SetTrailRendererTime(false);
+        }
         if (timer <= 0)
         {
+
             Release();
             timer = timerMax;
         }
     }
-    private void Release()
+    public void Release()
     {
+    
         pool.Release(this);
     }
    
     private void Unit_OnDestroyThisObjectInformBullet()
-    {     
+    {       
         Destroy(gameObject);
     }
     private void OnDestroy()
@@ -61,5 +75,10 @@ public class Bullet : MonoBehaviour
     private void OnDisable()
     {
         OnUnitDestroy -= Unit_OnDestroyThisObjectInformBullet;
+    }
+    public void SetTrailRendererTime(bool enable)
+    {
+        trailHolder.gameObject.SetActive(enable);
+     
     }
 }
