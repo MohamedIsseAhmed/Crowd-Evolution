@@ -9,6 +9,7 @@ TagManager:
   - FrontLine
   - Unit
   - LastEnemy
+  - Enemy
   layers:
   - Default
   - TransparentFX

@@ -8,6 +8,7 @@ public class LastEnemyTracker : MonoBehaviour
     public static LastEnemyTracker instance;
     [SerializeField] private List<GameObject> lastenemiesOnFrontLine;
     public event EventHandler OnAllEnemiesDied;
+    [SerializeField] private GameManager gameManagerSO;
     private void Awake()
     {
         instance = this;
@@ -31,6 +32,7 @@ public class LastEnemyTracker : MonoBehaviour
         if (lastenemiesOnFrontLine.Count == 0)
         {
             OnAllEnemiesDied?.Invoke(this, EventArgs.Empty);
+            gameManagerSO.RaiseLevelComplatedEvent(this, System.EventArgs.Empty);
         }
     }
 }

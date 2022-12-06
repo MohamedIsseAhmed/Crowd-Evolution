@@ -933,6 +933,7 @@ MonoBehaviour:
   moveSpeed: 4
   minDistanceToFrontPoint: 0.1
   unitType: 1
+  gameManagerSO: {fileID: 11400000, guid: 91ca11104912add449610bb0df6bd854, type: 2}
 --- !u!114 &-3649006426237702329
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,21 +35,60 @@ public class UnitController : MonoBehaviour
     private Vector3 targetPosition;
     private bool shouldAnimateYearText = false;
     [SerializeField] private bool hasIntialInstantiationHappened = false;
-   
+    [SerializeField] private GameManager gameManager;
     private System.Random randomNumber = new System.Random();
+    private bool isGameOver = false;
+    private LineRenderer lr;
     private void Awake()
     {
         unitLists = new List<Unit>();
         yearText.text ="    " +year + "\n    YEARS";
         targetYear = year;
+
+       
     }
     private void Start()
     {
-        
+        lr = GetComponent<LineRenderer>();
+        //lr.material = new Material(Shader.Find("Sprites/Default"));
+
+        // Set some positions
+        Vector3[] positions = new Vector3[3];
+        positions[0] = new Vector3(-2.0f, -2.0f, 0.0f);
+        positions[1] = new Vector3(0.0f, 2.0f, 0.0f);
+        positions[2] = new Vector3(2.0f, -2.0f, 0.0f);
+        lr.positionCount = positions.Length;
+        lr.SetPositions(positions);
+
         SpawnCharacter(year,characterCount,onlyIncreaseCharacters);
         camera = Camera.main;
         hasIntialInstantiationHappened = true;
         FrontLinePoints.instance.OnFrontLÝneTakeActionEvent += Ýnstance_OnFrontLÝneTakeActionEvent;
+        LastEnemyTracker.instance.OnAllEnemiesDied += Ýnstance_OnAllEnemiesDied;
+    }
+
+    private void Ýnstance_OnAllEnemiesDied(object sender, System.EventArgs e)
+    {
+        isGameOver=true;
+    }
+
+    private void OnEnable()
+    {
+        gameManager.CheckPlayerUnitNumber += GameManager_CheckPlayerUnitNumber;
+    }
+    private void OnDisable()
+    {
+        gameManager.CheckPlayerUnitNumber -= GameManager_CheckPlayerUnitNumber;
+        LastEnemyTracker.instance.OnAllEnemiesDied -= Ýnstance_OnAllEnemiesDied;
+    }
+    private void GameManager_CheckPlayerUnitNumber(object sender, System.EventArgs e)
+    {
+        if (transform.childCount < 3)
+        {
+            isGameOver = true;
+            gameManager.RaiseFailedEvent(this, System.EventArgs.Empty);
+        }
+        print("CHÝLDnUMBER:" + transform.childCount);
     }
 
     private void Ýnstance_OnFrontLÝneTakeActionEvent(object sender, List<Transform> frontLinePoints)
@@ -63,9 +102,9 @@ public class UnitController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
+        if (isGameOver)
         {
-            
+            return;
         }
         if (Input.GetMouseButtonDown(0))
         {
@@ -102,6 +141,16 @@ public class UnitController : MonoBehaviour
             yearText.text = "    " + year + "\n    YEARS";
         }
 
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Enemy") || other.CompareTag("LastEnemy"))
+        {
+            if (transform.childCount < 3)
+            {
+                gameManager.RaiseFailedEvent(this, System.EventArgs.Empty);
+            }
+        }
     }
     private IEnumerator AnimateTextCoroutine()
     {
@@ -229,5 +278,6 @@ public class UnitController : MonoBehaviour
 
         }
     }
+  
    
 }

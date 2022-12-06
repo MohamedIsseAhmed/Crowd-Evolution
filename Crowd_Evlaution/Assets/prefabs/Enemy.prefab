@@ -57,10 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8930192058912474673, guid: 149d530c2facd3149bb43353f640f13f, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'mixamorig:LeftArm'\n\tFrom animation clip
-        'Shoot Rifle'"
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4156215325086022656, guid: 149d530c2facd3149bb43353f640f13f, type: 3}
@@ -130,3 +127,4 @@ MonoBehaviour:
   moveSpeed: 4
   diatnceCanBulletDamageEnemy: 18
   enemyType: 0
+  gameManager: {fileID: 11400000, guid: 91ca11104912add449610bb0df6bd854, type: 2}

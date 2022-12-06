@@ -6,22 +6,43 @@ using DG.Tweening;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject levelComplatedPanel;
+    [SerializeField] private GameObject FailPanel;
     [SerializeField] private float levelComplateTween = 0.1f;
     [SerializeField] private float waitTimeScale = 1f;
-
+    [SerializeField] private GameManager gameManagerSO;
     private void Start()
     {
-        LastEnemyTracker.instance.OnAllEnemiesDied += Ýnstance_OnAllEnemiesDied;
+      //  LastEnemyTracker.instance.OnAllEnemiesDied += Ýnstance_OnAllEnemiesDied;
+    }
+    private void OnEnable()
+    {
+        gameManagerSO.OnLevelComplated += GameManagerSO_OnLevelComplated;
+        gameManagerSO.OnFailed += GameManagerSO_OnFailed;
+    }
+
+    private void GameManagerSO_OnFailed(object sender, System.EventArgs e)
+    {
+        StartCoroutine(TweenLevelComplatedCoroutineScaleL(FailPanel));
+    }
+
+    private void GameManagerSO_OnLevelComplated(object sender, System.EventArgs e)
+    {
+        StartCoroutine(TweenLevelComplatedCoroutineScaleL(levelComplatedPanel));
     }
 
     private void Ýnstance_OnAllEnemiesDied(object sender, System.EventArgs e)
     {
-        StartCoroutine(TweenLevelComplatedCoroutineScaleL());
+        StartCoroutine(TweenLevelComplatedCoroutineScaleL(levelComplatedPanel));
     }
-    private IEnumerator TweenLevelComplatedCoroutineScaleL()
+    private IEnumerator TweenLevelComplatedCoroutineScaleL(GameObject targetUIElement)
     {
         yield return new WaitForSeconds(waitTimeScale);
-        levelComplatedPanel.SetActive(true);
-        levelComplatedPanel.transform.DOScale(Vector3.one, levelComplateTween);
+        targetUIElement.SetActive(true);
+        targetUIElement.transform.DOScale(Vector3.one, levelComplateTween);
+    }
+    private void OnDisable()
+    {
+        gameManagerSO.OnLevelComplated -= GameManagerSO_OnLevelComplated;
+        gameManagerSO.OnFailed -= GameManagerSO_OnFailed;
     }
 }

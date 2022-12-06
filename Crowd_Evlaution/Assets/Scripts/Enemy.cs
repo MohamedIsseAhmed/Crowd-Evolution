@@ -10,10 +10,14 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float moveSpeed = 4;
     [SerializeField] private float diatnceCanBulletDamageEnemy = 15;
     [SerializeField] private EnemyType enemyType;
+    [SerializeField] private GameManager gameManager;
     private bool goToPlayerOnFrontLine;
     private Transform player;
+  
     private void Start()
     {
+        
+
         player = GameObject.FindGameObjectWithTag("Player").transform;
         FrontLinePoints.instance.OnFrontLÝneTakeActionEvent += Ýnstance_OnFrontLÝneTakeActionEvent;
        
@@ -39,8 +43,10 @@ public class Enemy : MonoBehaviour
         if (other.CompareTag("Bullet") && distanceToPlayer <= diatnceCanBulletDamageEnemy * diatnceCanBulletDamageEnemy)
         {
             LastEnemyTracker.instance.RemoveEnemy(gameObject);
-            print(distanceToPlayer);
+            
             enabled = false;
+            transform.tag = "Untagged";
+            GetComponent<Collider>().enabled = false;
             goToPlayerOnFrontLine = false;
             Bullet bullet = other.transform.GetComponent<Bullet>();
             bullet.Release();
@@ -50,15 +56,20 @@ public class Enemy : MonoBehaviour
         }
         else if (other.CompareTag("Unit"))
         {
+
             Unit unit = other.gameObject.GetComponent<Unit>();
             if (unit != null)
             {
+                other.transform.tag = "Untagged";
+                print(player.childCount);
                 UnitController unitController= player.GetComponent<UnitController>();
                 unitController.UnitLists.Remove(unit);
                 unitController.FormaCharactersOrderly();
                 unit.InformBulletBeforeDestroyingThisGameObject();
-                enabled = false;
-                Destroy(other.gameObject);
+                unit.PlayeDaethAnimation();
+                unit.StopShooting = true;
+                Destroy(other.gameObject,4);
+                gameManager.RaiseCheckPlayerUnitNumberEvent(this, System.EventArgs.Empty);
             }
             
         }

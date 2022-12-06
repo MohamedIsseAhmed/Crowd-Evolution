@@ -914,6 +914,8 @@ MonoBehaviour:
   animator: {fileID: 8930192058912474673}
   moveSpeed: 4
   minDistanceToFrontPoint: 0.25
+  unitType: 0
+  gameManagerSO: {fileID: 11400000, guid: 91ca11104912add449610bb0df6bd854, type: 2}
 --- !u!114 &4156215325086022656
 MonoBehaviour:
   m_ObjectHideFlags: 0

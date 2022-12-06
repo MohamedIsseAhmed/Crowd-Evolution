@@ -19,6 +19,8 @@ public class Unit : MonoBehaviour
     private bool isOnFrontLine = false;
     private bool isGameOver = false;
     private Transform targetFrontPoint;
+    [SerializeField] private GameManager gameManagerSO;
+    public bool StopShooting { get; set; } = false;
     private void Awake()
     {
         shoot = GetComponent<Shoot>();
@@ -44,7 +46,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        if (isGameOver)
+        if (isGameOver || StopShooting)
         {
             return;
         }
@@ -53,6 +55,7 @@ public class Unit : MonoBehaviour
         {
 
             shootTimer = shootTimerMax;
+           
             shoot.ShotTheEnemy();
         }
         if (isOnFrontLine)
@@ -81,7 +84,6 @@ public class Unit : MonoBehaviour
   
     public void InformBulletBeforeDestroyingThisGameObject()
     {
-    
         OnDestroyThisObjectInformBullet?.Invoke();
     }
     public void GoToFrontLinePoint(Transform taregtPoint)
@@ -91,12 +93,10 @@ public class Unit : MonoBehaviour
         isOnFrontLine = true;
        
     }
-    private void OnTriggerEnter(Collider other)
+    public void PlayeDaethAnimation()
     {
-        if(other.CompareTag("FrontLine"))
-        {
-           
-        }
+        transform.parent = null;
+        animator.SetTrigger("Die");
     }
     public enum UnitType
     {
